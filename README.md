@@ -6,7 +6,7 @@ Yet another time-tracking tool I wanted to build because I got bored. There's ot
 
 ### Manual (Only way right now)
 
-I made this on Arch linux, so it might not work everywhere.
+I made this on Arch linux btw, so it might not work everywhere.
 
 ```bash
 # Clone the repo
