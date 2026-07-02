@@ -13,6 +13,7 @@ import (
 type ctxKey string
 
 const dbKey ctxKey = "database"
+const cfgKey ctxKey = "config"
 
 var rootCmd = &cobra.Command{
 	Use:   "t",
@@ -22,9 +23,12 @@ I wanted to.`,
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
 		config, err := config.New()
 		cobra.CheckErr(err)
-		db, err := db.Provide(config.DatabasePath)
+		ctx := context.WithValue(cmd.Context(), cfgKey, config)
+
+		db, err := db.Provide(config)
 		cobra.CheckErr(err)
-		ctx := context.WithValue(cmd.Context(), dbKey, db)
+		ctx = context.WithValue(ctx, dbKey, db)
+
 		cmd.SetContext(ctx)
 	},
 }
@@ -46,4 +50,13 @@ func getDB(cmd *cobra.Command) (*db.Queries, error) {
 	}
 
 	return db, nil
+}
+
+func getCfg(cmd *cobra.Command) (*config.Config, error) {
+	cfg, ok := cmd.Context().Value(cfgKey).(*config.Config)
+	if !ok {
+		return nil, errors.New("config missing")
+	}
+
+	return cfg, nil
 }

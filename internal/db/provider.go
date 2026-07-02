@@ -1,6 +1,8 @@
 package db
 
 import (
+	"alex-laycalvert/t/internal/config"
+	"alex-laycalvert/t/internal/utils"
 	"context"
 	"database/sql"
 
@@ -12,8 +14,8 @@ import (
 //go:embed schema.sql
 var ddl string
 
-func Provide(dbPath string) (*Queries, error) {
-	// TODO: configurable sqlite file
+func Provide(cfg *config.Config) (*Queries, error) {
+	dbPath := utils.ExpandHomeDir(cfg.Get(config.DBPathKey))
 	db, err := sql.Open("sqlite3", dbPath)
 
 	if err != nil {
