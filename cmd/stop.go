@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"alex-laycalvert/t/internal/config"
-	"alex-laycalvert/t/internal/db"
 	"alex-laycalvert/t/internal/utils"
 	"context"
 	"fmt"
@@ -17,9 +15,7 @@ var stopCmd = &cobra.Command{
 	Short: "Stops the current timer for a project.",
 	Args:  cobra.ExactArgs(1),
 	ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
-		config, err := config.New()
-		cobra.CheckErr(err)
-		db, err := db.Provide(config.DatabasePath)
+		db, err := getDB(cmd)
 		cobra.CheckErr(err)
 
 		activeProjects, err := db.ListOngoingProjects(context.Background())
@@ -39,9 +35,7 @@ var stopCmd = &cobra.Command{
 			cobra.CheckErr(fmt.Errorf("stop needs a project name"))
 		}
 
-		config, err := config.New()
-		cobra.CheckErr(err)
-		db, err := db.Provide(config.DatabasePath)
+		db, err := getDB(cmd)
 		cobra.CheckErr(err)
 
 		projectName := args[0]

@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"alex-laycalvert/t/internal/config"
-	"alex-laycalvert/t/internal/db"
 	"context"
 	"fmt"
 
@@ -19,9 +17,7 @@ Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		config, err := config.New()
-		cobra.CheckErr(err)
-		db, err := db.Provide(config.DatabasePath)
+		db, err := getDB(cmd)
 		cobra.CheckErr(err)
 
 		status, err := cmd.Flags().GetString("status")

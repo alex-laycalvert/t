@@ -1,8 +1,6 @@
 package cmd
 
 import (
-	"alex-laycalvert/t/internal/config"
-	"alex-laycalvert/t/internal/db"
 	"context"
 	"fmt"
 
@@ -18,9 +16,7 @@ var startCmd = &cobra.Command{
 			cobra.CheckErr(fmt.Errorf("start needs a project name"))
 		}
 
-		config, err := config.New()
-		cobra.CheckErr(err)
-		db, err := db.Provide(config.DatabasePath)
+		db, err := getDB(cmd)
 		cobra.CheckErr(err)
 
 		projectName := args[0]
