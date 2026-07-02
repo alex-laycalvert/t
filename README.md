@@ -1,0 +1,31 @@
+# t
+
+Yet another time-tracking tool I wanted to build because I got bored. There's other tools that do what I want, I just wanted to make my own.
+
+## What I Want
+
+- Start a timer for a project
+
+```bash
+t start <project>
+```
+
+- Let multiple projects run at the same time
+- Autocomplete `<project>` for commands
+- Stop a project timer and see the elapsed time, pauses, etc.
+
+```bash
+t stop <project>
+```
+
+- See how long I've worked on a project
+
+```bash
+t show <project>
+```
+
+## TODO
+
+- [ ] Better error handling when unqiue constraint fails
+- [ ] Better DB creation / config handling
+- [ ] Configuration file
