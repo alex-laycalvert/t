@@ -19,6 +19,32 @@ cd ./t
 make install
 ```
 
+## Usage
+
+### Start a new project timer
+
+```bash
+t start <project>
+```
+
+### See project timer details
+
+```bash
+t show <project>
+```
+
+### Stop a project timer
+
+```bash
+t stop <project>
+```
+
+### Show projects
+
+```bash
+t projects
+```
+
 ## What I Want
 
 - Start a timer for a project
@@ -46,3 +72,4 @@ t show <project>
 - [ ] Better error handling when unqiue constraint fails
 - [x] Better DB creation / config handling
 - [x] Configuration file
+- [ ] The `show` command with no sub args should probably show all projects instead of a separate `projects` command
