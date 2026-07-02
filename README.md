@@ -44,5 +44,5 @@ t show <project>
 ## TODO
 
 - [ ] Better error handling when unqiue constraint fails
-- [ ] Better DB creation / config handling
-- [ ] Configuration file
+- [x] Better DB creation / config handling
+- [x] Configuration file
