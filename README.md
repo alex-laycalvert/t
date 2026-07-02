@@ -2,6 +2,23 @@
 
 Yet another time-tracking tool I wanted to build because I got bored. There's other tools that do what I want, I just wanted to make my own.
 
+## Installation
+
+### Manual (Only way right now)
+
+I made this on Arch linux, so it might not work everywhere.
+
+```bash
+# Clone the repo
+git clone https://github.com/alex-laycalvert/t
+
+# Navigate
+cd ./t
+
+# Install
+make install
+```
+
 ## What I Want
 
 - Start a timer for a project
