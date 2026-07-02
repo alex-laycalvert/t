@@ -44,8 +44,9 @@ var showCmd = &cobra.Command{
 		projectTimers, err := db.GetProject(context.Background(), projectName)
 		cobra.CheckErr(err)
 
-		header := "Time entries for "
-		fmt.Printf("%s%s\n", header, projectName)
+		fmt.Printf("Time entries for %s\n", projectName)
+
+		var totalTime int64 = 0
 
 		w := tabwriter.NewWriter(os.Stdout, 0, 0, 1, ' ', 0)
 		fmt.Fprintf(w, "i\tElapsed\tStarted\tStopped\n")
@@ -62,6 +63,7 @@ var showCmd = &cobra.Command{
 			} else {
 				elapsed = timer.StopSeconds - timer.StartSeconds
 			}
+			totalTime += elapsed
 
 			fmt.Fprintf(w, "%d\t%s\t%s\t%s\n",
 				i,
@@ -71,6 +73,8 @@ var showCmd = &cobra.Command{
 			)
 		}
 		w.Flush()
+
+		fmt.Printf("Total time: %s\n", utils.FormatElapsedTime(totalTime))
 	},
 }
 
