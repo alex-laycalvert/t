@@ -30,12 +30,11 @@ var stopCmd = &cobra.Command{
 			return err
 		}
 
-		fmt.Printf("Stopped timer for %s\n", projectTimer.ProjectName)
-
 		started := time.Unix(projectTimer.StartSeconds, 0)
 		stopped := time.Unix(projectTimer.StopSeconds, 0)
 		elapsed := projectTimer.StopSeconds - projectTimer.StartSeconds
 
+		fmt.Printf("Stopped timer for %s\n", projectTimer.ProjectName)
 		fmt.Printf("  Started: %s\n", started.Format(utils.DateTimeLayout))
 		fmt.Printf("  Stopped: %s\n", stopped.Format(utils.DateTimeLayout))
 		fmt.Printf("  Elapsed: %s\n", utils.FormatElapsedTime(elapsed))
