@@ -22,6 +22,7 @@ var startCmd = &cobra.Command{
 		projectName := args[0]
 		err = db.StartTimer(context.Background(), projectName)
 		cobra.CheckErr(err)
+		fmt.Printf("%s started.\n", projectName)
 	},
 }
 

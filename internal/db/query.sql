@@ -39,3 +39,7 @@ UPDATE project_timers
 SET stop_seconds = unixepoch('now')
 WHERE project_name = ? AND stop_seconds = -1
 RETURNING *;
+
+-- name: DeleteProject :exec
+DELETE FROM projects
+WHERE name = ?;

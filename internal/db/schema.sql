@@ -3,10 +3,11 @@ CREATE TABLE IF NOT EXISTS projects (
 );
 
 CREATE TABLE IF NOT EXISTS project_timers (
-	project_name	TEXT	NOT NULL REFERENCES projects(name),
+	project_name	TEXT	NOT NULL,
 	start_seconds	INTEGER	NOT NULL,
 	stop_seconds	INTEGER	NOT NULL DEFAULT -1,
 
+	FOREIGN KEY (project_name) REFERENCES projects(name) ON DELETE CASCADE,
 	-- Cannot have two active timers for the same project.
 	-- This also prevents two recorded timers from stopping at the same time
 	-- for the same project, which realistically should never happen anyways.

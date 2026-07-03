@@ -5,7 +5,6 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"strings"
 	"text/tabwriter"
 	"time"
 
@@ -13,25 +12,10 @@ import (
 )
 
 var showCmd = &cobra.Command{
-	Use:   "show <project>",
-	Short: "Shows all recorded timers and progress for a project.",
-	Args:  cobra.ExactArgs(1),
-	ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
-		db, err := getDB(cmd)
-		cobra.CheckErr(err)
-
-		projects, err := db.ListProjects(context.Background())
-		cobra.CheckErr(err)
-
-		var matches []string
-		for _, target := range projects {
-			if strings.HasPrefix(target, toComplete) {
-				matches = append(matches, target)
-			}
-		}
-
-		return matches, cobra.ShellCompDirectiveNoFileComp
-	},
+	Use:               "show <project>",
+	Short:             "Shows all recorded timers and progress for a project.",
+	Args:              cobra.ExactArgs(1),
+	ValidArgsFunction: projectsArgsFunction(false),
 	Run: func(cmd *cobra.Command, args []string) {
 		if len(args) != 1 {
 			cobra.CheckErr(fmt.Errorf("show needs a project name"))
