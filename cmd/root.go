@@ -20,16 +20,21 @@ var rootCmd = &cobra.Command{
 	Short: "Yet another lightweight, terminal time-tracking tool.",
 	Long: `This does what every other time-tracking tool does, and probably less. I built it because
 I wanted to.`,
-	PersistentPreRun: func(cmd *cobra.Command, args []string) {
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
 		config, err := config.New()
-		cobra.CheckErr(err)
+		if err != nil {
+			return err
+		}
 		ctx := context.WithValue(cmd.Context(), cfgKey, config)
 
 		db, err := db.Provide(config)
-		cobra.CheckErr(err)
+		if err != nil {
+			return err
+		}
 		ctx = context.WithValue(ctx, dbKey, db)
 
 		cmd.SetContext(ctx)
+		return nil
 	},
 }
 
@@ -43,8 +48,8 @@ func Execute() {
 func init() {
 }
 
-func getDB(cmd *cobra.Command) (*db.Queries, error) {
-	db, ok := cmd.Context().Value(dbKey).(*db.Queries)
+func getDB(cmd *cobra.Command) (*db.DB, error) {
+	db, ok := cmd.Context().Value(dbKey).(*db.DB)
 	if !ok {
 		return nil, errors.New("db missing")
 	}

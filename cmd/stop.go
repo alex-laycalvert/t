@@ -4,43 +4,31 @@ import (
 	"alex-laycalvert/t/internal/utils"
 	"context"
 	"fmt"
-	"strings"
 	"time"
 
 	"github.com/spf13/cobra"
 )
 
 var stopCmd = &cobra.Command{
-	Use:   "stop <project>",
-	Short: "Stops the current timer for a project.",
-	Args:  cobra.ExactArgs(1),
-	ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
-		db, err := getDB(cmd)
-		cobra.CheckErr(err)
-
-		activeProjects, err := db.ListOngoingProjects(context.Background())
-		cobra.CheckErr(err)
-
-		var matches []string
-		for _, target := range activeProjects {
-			if strings.HasPrefix(target, toComplete) {
-				matches = append(matches, target)
-			}
-		}
-
-		return matches, cobra.ShellCompDirectiveNoFileComp
-	},
-	Run: func(cmd *cobra.Command, args []string) {
+	Use:               "stop <project>",
+	Short:             "Stops the current timer for a project.",
+	Args:              cobra.ExactArgs(1),
+	ValidArgsFunction: projectsArgsFunction(true),
+	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 1 {
-			cobra.CheckErr(fmt.Errorf("stop needs a project name"))
+			return fmt.Errorf("stop needs a project name")
 		}
 
 		db, err := getDB(cmd)
-		cobra.CheckErr(err)
+		if err != nil {
+			return err
+		}
 
 		projectName := args[0]
-		projectTimer, err := db.StopTimer(context.Background(), projectName)
-		cobra.CheckErr(err)
+		projectTimer, err := db.Queries.StopTimer(context.Background(), projectName)
+		if err != nil {
+			return err
+		}
 
 		fmt.Printf("Stopped timer for %s\n", projectTimer.ProjectName)
 
@@ -51,6 +39,7 @@ var stopCmd = &cobra.Command{
 		fmt.Printf("  Started: %s\n", started.Format(utils.DateTimeLayout))
 		fmt.Printf("  Stopped: %s\n", stopped.Format(utils.DateTimeLayout))
 		fmt.Printf("  Elapsed: %s\n", utils.FormatElapsedTime(elapsed))
+		return nil
 	},
 }
 

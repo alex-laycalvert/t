@@ -14,7 +14,12 @@ import (
 //go:embed schema.sql
 var ddl string
 
-func Provide(cfg *config.Config) (*Queries, error) {
+type DB struct {
+	DB      *sql.DB
+	Queries *Queries
+}
+
+func Provide(cfg *config.Config) (*DB, error) {
 	dbPath := utils.ExpandHomeDir(cfg.Get(config.DBPathKey))
 	db, err := sql.Open("sqlite3", dbPath)
 
@@ -27,5 +32,9 @@ func Provide(cfg *config.Config) (*Queries, error) {
 		return nil, err
 	}
 
-	return New(db), nil
+	queries := New(db)
+	return &DB{
+		DB:      db,
+		Queries: queries,
+	}, nil
 }
