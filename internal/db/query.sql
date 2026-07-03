@@ -43,3 +43,7 @@ RETURNING *;
 -- name: DeleteProject :exec
 DELETE FROM projects
 WHERE name = ?;
+
+-- name: DeleteTimers :exec
+DELETE FROM project_timers
+WHERE project_name = ?;

@@ -12,5 +12,4 @@ type ProjectTimer struct {
 	ProjectName  string
 	StartSeconds int64
 	StopSeconds  int64
-	Foreign      interface{}
 }

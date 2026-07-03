@@ -14,17 +14,21 @@ var stopCmd = &cobra.Command{
 	Short:             "Stops the current timer for a project.",
 	Args:              cobra.ExactArgs(1),
 	ValidArgsFunction: projectsArgsFunction(true),
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 1 {
-			cobra.CheckErr(fmt.Errorf("stop needs a project name"))
+			return fmt.Errorf("stop needs a project name")
 		}
 
 		db, err := getDB(cmd)
-		cobra.CheckErr(err)
+		if err != nil {
+			return err
+		}
 
 		projectName := args[0]
-		projectTimer, err := db.StopTimer(context.Background(), projectName)
-		cobra.CheckErr(err)
+		projectTimer, err := db.Queries.StopTimer(context.Background(), projectName)
+		if err != nil {
+			return err
+		}
 
 		fmt.Printf("Stopped timer for %s\n", projectTimer.ProjectName)
 
@@ -35,6 +39,7 @@ var stopCmd = &cobra.Command{
 		fmt.Printf("  Started: %s\n", started.Format(utils.DateTimeLayout))
 		fmt.Printf("  Stopped: %s\n", stopped.Format(utils.DateTimeLayout))
 		fmt.Printf("  Elapsed: %s\n", utils.FormatElapsedTime(elapsed))
+		return nil
 	},
 }
 

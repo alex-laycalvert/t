@@ -32,17 +32,20 @@ var configGetCmd = &cobra.Command{
 		}
 		return config.ValidKeys(), cobra.ShellCompDirectiveNoFileComp
 	},
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		keyStr := args[0]
 		if !config.IsConfigKey(keyStr) {
-			cobra.CheckErr(fmt.Errorf("invalid config key"))
+			return fmt.Errorf("invalid config key")
 		}
 		key := config.ConfigKey(keyStr)
 
 		cfg, err := getCfg(cmd)
-		cobra.CheckErr(err)
+		if err != nil {
+			return err
+		}
 		value := cfg.Get(key)
 		fmt.Println(value)
+		return nil
 	},
 }
 
@@ -56,19 +59,23 @@ var configSetCmd = &cobra.Command{
 		}
 		return nil, cobra.ShellCompDirectiveDefault
 	},
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		keyStr := args[0]
 		if !config.IsConfigKey(keyStr) {
-			cobra.CheckErr(fmt.Errorf("invalid config key"))
+			return fmt.Errorf("invalid config key")
 		}
 		key := config.ConfigKey(keyStr)
 		value := args[1]
 
 		cfg, err := getCfg(cmd)
-		cobra.CheckErr(err)
-		err = cfg.Set(key, value)
-		cobra.CheckErr(err)
+		if err != nil {
+			return err
+		}
+		if err := cfg.Set(key, value); err != nil {
+			return err
+		}
 		fmt.Printf("%s = %s\n", args[0], args[1])
+		return nil
 	},
 }
 
@@ -77,22 +84,27 @@ var configOpenCmd = &cobra.Command{
 	Short: "Open config file in your preferred editor",
 	Long:  "Opens the config file in the editor specified by the EDITOR environment variable.",
 	Args:  cobra.NoArgs,
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		editor := os.Getenv("EDITOR")
 		if editor == "" {
-			cobra.CheckErr(fmt.Errorf("EDITOR environment variable is not set"))
+			return fmt.Errorf("EDITOR environment variable is not set")
 		}
 
 		cfg, err := getCfg(cmd)
-		cobra.CheckErr(err)
+		if err != nil {
+			return err
+		}
 
 		// Ensure the config file exists before opening.
-		err = os.MkdirAll(filepath.Dir(cfg.FilePath), 0755)
-		cobra.CheckErr(err)
+		if err := os.MkdirAll(filepath.Dir(cfg.FilePath), 0755); err != nil {
+			return err
+		}
 
 		if _, err := os.Stat(cfg.FilePath); os.IsNotExist(err) {
 			f, err := os.Create(cfg.FilePath)
-			cobra.CheckErr(err)
+			if err != nil {
+				return err
+			}
 			f.Close()
 		}
 
@@ -100,7 +112,7 @@ var configOpenCmd = &cobra.Command{
 		c.Stdin = os.Stdin
 		c.Stdout = os.Stdout
 		c.Stderr = os.Stderr
-		cobra.CheckErr(c.Run())
+		return c.Run()
 	},
 }
 

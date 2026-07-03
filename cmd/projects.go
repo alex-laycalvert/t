@@ -16,31 +16,36 @@ and usage of using your command. For example:
 Cobra is a CLI library for Go that empowers applications.
 This application is a tool to generate the needed files
 to quickly create a Cobra application.`,
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		db, err := getDB(cmd)
-		cobra.CheckErr(err)
+		if err != nil {
+			return err
+		}
 
 		status, err := cmd.Flags().GetString("status")
-		cobra.CheckErr(err)
+		if err != nil {
+			return err
+		}
 
 		var projects []string
 		switch status {
 		case "ongoing":
-			projects, err = db.ListOngoingProjects(context.Background())
-			cobra.CheckErr(err)
+			projects, err = db.Queries.ListOngoingProjects(context.Background())
 		case "stopped":
-			projects, err = db.ListStoppedProjects(context.Background())
-			cobra.CheckErr(err)
+			projects, err = db.Queries.ListStoppedProjects(context.Background())
 		case "all":
-			projects, err = db.ListProjects(context.Background())
-			cobra.CheckErr(err)
+			projects, err = db.Queries.ListProjects(context.Background())
 		default:
-			cobra.CheckErr(fmt.Errorf("unknown status (must be 'all', 'ongoing', or 'stopped')"))
+			return fmt.Errorf("unknown status (must be 'all', 'ongoing', or 'stopped')")
+		}
+		if err != nil {
+			return err
 		}
 
 		for _, project := range projects {
 			fmt.Println(project)
 		}
+		return nil
 	},
 }
 

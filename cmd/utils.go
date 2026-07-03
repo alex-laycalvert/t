@@ -10,15 +10,19 @@ import (
 func projectsArgsFunction(onlyOngoing bool) cobra.CompletionFunc {
 	return func(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
 		db, err := getDB(cmd)
-		cobra.CheckErr(err)
+		if err != nil {
+			return nil, cobra.ShellCompDirectiveError
+		}
 
 		var projects []string
 		if onlyOngoing {
-			projects, err = db.ListOngoingProjects(context.Background())
+			projects, err = db.Queries.ListOngoingProjects(context.Background())
 		} else {
-			projects, err = db.ListProjects(context.Background())
+			projects, err = db.Queries.ListProjects(context.Background())
 		}
-		cobra.CheckErr(err)
+		if err != nil {
+			return nil, cobra.ShellCompDirectiveError
+		}
 
 		var matches []string
 		for _, target := range projects {

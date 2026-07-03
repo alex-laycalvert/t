@@ -19,6 +19,16 @@ func (q *Queries) DeleteProject(ctx context.Context, name string) error {
 	return err
 }
 
+const deleteTimers = `-- name: DeleteTimers :exec
+DELETE FROM project_timers
+WHERE project_name = ?
+`
+
+func (q *Queries) DeleteTimers(ctx context.Context, projectName string) error {
+	_, err := q.db.ExecContext(ctx, deleteTimers, projectName)
+	return err
+}
+
 const getProject = `-- name: GetProject :many
 SELECT p.name, t.start_seconds, t.stop_seconds
 FROM projects AS p
@@ -167,17 +177,12 @@ const stopTimer = `-- name: StopTimer :one
 UPDATE project_timers
 SET stop_seconds = unixepoch('now')
 WHERE project_name = ? AND stop_seconds = -1
-RETURNING project_name, start_seconds, stop_seconds, "foreign"
+RETURNING project_name, start_seconds, stop_seconds
 `
 
 func (q *Queries) StopTimer(ctx context.Context, projectName string) (ProjectTimer, error) {
 	row := q.db.QueryRowContext(ctx, stopTimer, projectName)
 	var i ProjectTimer
-	err := row.Scan(
-		&i.ProjectName,
-		&i.StartSeconds,
-		&i.StopSeconds,
-		&i.Foreign,
-	)
+	err := row.Scan(&i.ProjectName, &i.StartSeconds, &i.StopSeconds)
 	return i, err
 }
