@@ -39,7 +39,15 @@ t show <project>
 t stop <project>
 ```
 
+### Delete a project (and all time records)
+
+```bash
+t delete <project>
+```
+
 ### Show projects
+
+This will probably change in the future since this isn't how I like to show ongoing or stopped projects.
 
 ```bash
 t projects
