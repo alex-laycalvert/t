@@ -35,8 +35,8 @@ FROM projects AS p
 JOIN project_timers AS t ON p.name = t.project_name
 WHERE p.name = ?
 ORDER BY
-    t.start_seconds DESC,
-    t.stop_seconds DESC
+    t.start_seconds ASC,
+    t.stop_seconds ASC
 `
 
 type GetProjectRow struct {
