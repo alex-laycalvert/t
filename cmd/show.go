@@ -54,7 +54,7 @@ var showCmd = &cobra.Command{
 			totalTime += elapsed
 
 			fmt.Fprintf(w, "%d\t%s\t%s\t%s\n",
-				i,
+				i+1,
 				utils.FormatElapsedTime(elapsed),
 				started,
 				stopped,
